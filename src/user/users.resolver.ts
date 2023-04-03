@@ -3,7 +3,8 @@ import { Resolver, Query } from '@nestjs/graphql';
 import { User } from '../models/user.model';
 import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/guards/roles.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -13,7 +14,8 @@ export class UsersResolver {
     name: 'me',
     description: 'Me',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles('ad', 'st', 'fa', 'hod', 'pr', 'pa')
   async me() {
     return this.usersService.me();
   }
