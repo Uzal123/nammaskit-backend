@@ -6,11 +6,13 @@ import { User, UserModel } from '../models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
+import { RequestService } from 'src/request.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
+    private readonly requestService: RequestService,
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
   ) {}
 
@@ -36,6 +38,8 @@ export class RolesGuard implements CanActivate {
     }
 
     if (user.role) {
+      this.requestService.setUserId(user._id);
+      this.requestService.setRole(user.role);
       return roles.includes(user.role);
     }
 
