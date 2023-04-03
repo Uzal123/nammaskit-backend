@@ -1,20 +1,21 @@
-import { User, UserModel } from '../models/user.model';
-import { RequestService } from '../request.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import * as jwt from 'jsonwebtoken';
-import { Model } from 'mongoose';
+import { UsersService } from 'src/user/users.service';
+import { User, UserModel } from '../models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
-import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
+import { Model } from 'mongoose';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class AdminAuthGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   constructor(
-    private readonly requestService: RequestService,
+    private reflector: Reflector,
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
   ) {}
 
-  async canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
     const authToken: string | null = req.headers['authorization']
@@ -25,19 +26,19 @@ export class AdminAuthGuard implements CanActivate {
       return false;
     }
     const { id } = jwt.verify(authToken, process.env.JWT_SECRET);
+
+    if (!id) {
+      return false;
+    }
     const user = await this.userModel.findById(id);
     if (!user) {
       return false;
     }
 
-    if (user.role !== AllowedRole.ad) {
-      return false;
+    if (user.role) {
+      return roles.includes(user.role);
     }
 
-    this.requestService.setUserId(user._id);
-    this.requestService.setRole(user.role);
-
-    return true;
+    return false;
   }
 }
-

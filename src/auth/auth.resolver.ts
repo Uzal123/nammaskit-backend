@@ -52,18 +52,18 @@ export class AuthResolver {
   ) {
     return this.authService.verifyResetOTP(phone, otp);
   }
-  @Mutation(() => AuthResponse, { name: 'sendUserVerificationOtp' })
-  @UseGuards(AuthGuard)
-  async sendUserVerificationOtp() {
-    return this.authService.sendUserVerificationOtp();
-  }
+//   @Mutation(() => AuthResponse, { name: 'sendUserVerificationOtp' })
+//   @UseGuards(AuthGuard)
+//   async sendUserVerificationOtp() {
+//     return this.authService.sendUserVerificationOtp();
+//   }
 
-  @Mutation(() => AuthResponse, { name: 'sendForgotPasswordOtp' })
-  async sendForgotPasswordOtp(
-    @Args('phone', { type: () => Number }) phone: number,
-  ) {
-    return this.authService.sendPasswordResetOtp(phone);
-  }
+//   @Mutation(() => AuthResponse, { name: 'sendForgotPasswordOtp' })
+//   async sendForgotPasswordOtp(
+//     @Args('phone', { type: () => Number }) phone: number,
+//   ) {
+//     return this.authService.sendPasswordResetOtp(phone);
+//   }
   @Mutation(() => AuthResponse, { name: 'resetPassword' })
   async resetPassword(
     @Args('phone', { type: () => Number }) phone: number,

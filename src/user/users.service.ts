@@ -11,6 +11,9 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
+  generateSalt() {
+      throw new Error('Method not implemented.');
+  }
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
     private readonly requestService: RequestService,
@@ -77,7 +80,10 @@ export class UsersService {
       .findOne({ phone })
       .select([
         'name',
-        'fullName',
+        'firstName',
+        'lastName',
+        'role',
+        'gender',
         'email',
         'username',
         'accessToken',
@@ -95,7 +101,10 @@ export class UsersService {
       .findOne({ email })
       .select([
         'name',
-        'fullName',
+        'firstName',
+        'lastName',
+        'role',
+        'gender',
         'email',
         'username',
         'accessToken',

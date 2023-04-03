@@ -16,6 +16,7 @@ import { UploadModule } from './upload/upload.module';
 import { ChatModule } from './chat/chat.module';
 import { SmsModule } from './sms/sms.module';
 import { StudentModule } from './student/student.module';
+import { TeacherModule } from './teacher/teacher.module';
 
 // export interface GqlContext {
 //   req: Request;
@@ -93,6 +94,7 @@ import { StudentModule } from './student/student.module';
     AuthModule,
     ProfileModule,
     StudentModule,
+    TeacherModule,
     ProductModule,
     UploadModule,
     ChatModule,

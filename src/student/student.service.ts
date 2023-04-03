@@ -10,12 +10,15 @@ import {
 import { RequestService } from 'src/request.service';
 import { UsersService } from 'src/user/users.service';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
+import { AuthService } from 'src/auth/auth.service';
+import { StudentResponse } from './dto/student.response';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectModel(Student.name)
     private readonly studentModel: Model<StudentModel>,
+    private readonly authService: AuthService,
     private readonly userService: UsersService,
     private readonly requestService: RequestService,
   ) {}
@@ -39,7 +42,10 @@ export class StudentService {
     return students;
   }
 
-  async createStudent(crateStudentInput: CreateStudentInput) {
+  async createStudent(
+    crateStudentInput: CreateStudentInput,
+  ): Promise<StudentResponse> {
+    const result = new StudentResponse();
     const {
       firstName,
       lastName,
@@ -63,7 +69,7 @@ export class StudentService {
       motherName,
       usn,
     } = crateStudentInput;
-    const user = await this.userService.create({
+    const { user, message, success } = await this.authService.register({
       firstName,
       lastName,
       phone,
@@ -72,29 +78,47 @@ export class StudentService {
       role: AllowedRole.st,
       gender,
     });
-    const student = await (
-      await this.studentModel.create({
-        user: user._id,
-        semester,
-        admissionYear,
-        parentOccupation,
-        parentPhone,
-        parmanentAddress,
-        anualIncome,
-        currentAddress,
-        course,
-        entranceExamMarks,
-        category,
-        department,
-        dob,
-        fatherName,
-        motherName,
-        usn,
-        phone,
-      })
-    ).populate('user');
 
-    return student;
+    if (!success && !user) {
+      result.message = message;
+      result.success = false;
+      return result;
+    }
+
+    if (success && user) {
+      const student = await (
+        await this.studentModel.create({
+          user: user._id,
+          semester,
+          admissionYear,
+          parentOccupation,
+          parentPhone,
+          parmanentAddress,
+          anualIncome,
+          currentAddress,
+          course,
+          entranceExamMarks,
+          category,
+          department,
+          dob,
+          fatherName,
+          motherName,
+          usn,
+          phone,
+        })
+      ).populate('user');
+      if (!student) {
+        result.message = 'Student not created';
+        result.success = false;
+        result.student = null;
+        return result;
+      } else {
+        result.student = student;
+        result.message = 'Student created successfully';
+        result.success = true;
+      }
+    }
+    return result;
   }
 
   async updateStudent(updateStudentInput: UpdateStudentInput) {

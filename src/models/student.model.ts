@@ -22,9 +22,6 @@ export class Student {
   @Prop({ required: true })
   currentAddress: String;
 
-  @Field(() => String)
-  @Prop({ required: true })
-  phone: String;
 
   @Field(() => String)
   @Prop({ required: true })

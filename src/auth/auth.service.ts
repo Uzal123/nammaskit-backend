@@ -13,7 +13,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RequestService } from 'src/request.service';
 import { OtpType } from 'src/common/dto/optType.enum';
-import { SmsService } from 'src/sms/sms.service';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 @Injectable()
 export class AuthService {
@@ -21,7 +20,6 @@ export class AuthService {
     @InjectModel(Otp.name) private readonly otpModel: Model<OtpModel>,
     private usersService: UsersService,
     private requestService: RequestService,
-    private readonly smsService: SmsService,
   ) {}
 
   private isPhoneNo(phoneNo: string): boolean {
@@ -102,28 +100,28 @@ export class AuthService {
   
 
 
-  public async sendUserVerificationOtp(): Promise<AuthResponse> {
-    const result = new AuthResponse();
-    const userId = this.requestService.getUserId();
-    const user = await this.usersService.findOneById(userId);
-    if (user) {
-      const otp = await this.createOtp(userId, OtpType.VERIFICATION);
+//   public async sendUserVerificationOtp(): Promise<AuthResponse> {
+//     const result = new AuthResponse();
+//     const userId = this.requestService.getUserId();
+//     const user = await this.usersService.findOneById(userId);
+//     if (user) {
+//       const otp = await this.createOtp(userId, OtpType.VERIFICATION);
 
-      const msgSend = await this.smsService.sendSms(
-        user.phone,
-        `Your OTP verification for MotoGhar is : ${otp.otp}`,
-      );
-      result.success = true;
-      result.message = 'OTP sent';
-      // result.user = user.user;
-      return result;
-    }
+//       const msgSend = await this.smsService.sendSms(
+//         user.phone,
+//         `Your OTP verification for MotoGhar is : ${otp.otp}`,
+//       );
+//       result.success = true;
+//       result.message = 'OTP sent';
+//       // result.user = user.user;
+//       return result;
+//     }
 
-    result.success = false;
-    result.message = "User doesn't exist";
+//     result.success = false;
+//     result.message = "User doesn't exist";
 
-    return result;
-  }
+//     return result;
+//   }
 
   public async login(phoneNo: number, password: string): Promise<AuthResponse> {
     const result = new AuthResponse();
@@ -182,23 +180,23 @@ export class AuthService {
     return hash;
   }
 
-  public async sendPasswordResetOtp(phone: number): Promise<AuthResponse> {
-    const result = new AuthResponse();
-    const user = await this.usersService.findOneByPhone(phone);
-    if (user) {
-      const otp = await this.createOtp(user._id, OtpType.RESET_PASSWORD);
-      const msgSend = await this.smsService.sendSms(
-        user.phone,
-        `Your OTP to reset password is : ${otp.otp}`,
-      );
-      result.success = true;
-      result.message = 'OTP sent';
-      return result;
-    }
-    result.success = false;
-    result.message = "User doesn't exist";
-    return result;
-  }
+//   public async sendPasswordResetOtp(phone: number): Promise<AuthResponse> {
+//     const result = new AuthResponse();
+//     const user = await this.usersService.findOneByPhone(phone);
+//     if (user) {
+//       const otp = await this.createOtp(user._id, OtpType.RESET_PASSWORD);
+//       const msgSend = await this.smsService.sendSms(
+//         user.phone,
+//         `Your OTP to reset password is : ${otp.otp}`,
+//       );
+//       result.success = true;
+//       result.message = 'OTP sent';
+//       return result;
+//     }
+//     result.success = false;
+//     result.message = "User doesn't exist";
+//     return result;
+//   }
 
   private async getValidOtp(
     otp: string,
