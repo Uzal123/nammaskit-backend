@@ -7,15 +7,17 @@ import { UsersService } from 'src/user/users.service';
 import { Teacher, TeacherModel } from 'src/models/teacher.model';
 import { AuthService } from 'src/auth/auth.service';
 import { TeacherResponse } from './dto/teacher.response';
+import { User, UserModel } from 'src/models/user.model';
+import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 
 @Injectable()
 export class TeacherService {
+  userModel: any;
   constructor(
     @InjectModel(Teacher.name)
     private readonly teacherModel: Model<TeacherModel>,
-    private readonly userService: UsersService,
     private readonly authService: AuthService,
-    private readonly requestService: RequestService,
+    private readonly userService: UsersService,
   ) {}
 
   async createTeacher(
@@ -78,6 +80,32 @@ export class TeacherService {
   // Get all teachers
   async getAllTeachers() {
     const teachers = await this.teacherModel.find().populate('user');
+    return teachers;
+  }
+
+  async findTeachersByAllowedRoles(
+    allowedRoles: AllowedRole[],
+  ): Promise<Teacher[]> {
+    const teachers = await this.teacherModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $match: {
+            'user.role': { $in: allowedRoles },
+          },
+        },
+      ])
+      .exec();
     return teachers;
   }
 }

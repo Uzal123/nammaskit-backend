@@ -12,7 +12,7 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class UsersService {
   generateSalt() {
-      throw new Error('Method not implemented.');
+    throw new Error('Method not implemented.');
   }
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
@@ -24,7 +24,6 @@ export class UsersService {
     createUserInput: CreateUserInput,
   ): Promise<UserModel | undefined> {
     const createdUser = await this.userModel.create(createUserInput);
-
 
     return createdUser;
   }
@@ -115,6 +114,8 @@ export class UsersService {
       ]);
   }
 
+  //get users by role
+
   public async verifyPhone(phone: number): Promise<UserModel> {
     const user = await this.userModel.findOneAndUpdate(
       { phone },
@@ -124,6 +125,7 @@ export class UsersService {
 
     return user;
   }
+
 
   public getToken(user: UserModel): string {
     const expiresIn = process.env.JWT_EXPIRES_IN;
