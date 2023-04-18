@@ -59,28 +59,3 @@ export class CreateTeacherInput {
   address: String;
 }
 
-// Path: src\student\dto\update.student.input.ts
-//inputs for the updateStudent mutation
-@InputType()
-export class UpdateStudentInput {
-  @Field()
-  firstName: string;
-  @Field()
-  lastName: string;
-  @Field()
-  email: string;
-  @Field()
-  password: string;
-  @Field()
-  role: string;
-  @Field()
-  _id: string;
-}
-
-// Path: src\student\dto\student.input.ts
-//inputs for the student query
-@InputType()
-export class StudentInput {
-  @Field()
-  _id: string;
-}

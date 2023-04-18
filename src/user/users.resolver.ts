@@ -1,5 +1,5 @@
 import { UserResponse } from '../common/dto/user.response';
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
 import { User } from '../models/user.model';
 import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
@@ -18,5 +18,15 @@ export class UsersResolver {
   @Roles('ad', 'st', 'fa', 'hod', 'pr', 'pa')
   async me() {
     return this.usersService.me();
+  }
+
+  @Query(() => User, {
+    name: 'userbyID',
+    description: 'get user by UserId',
+  })
+  @UseGuards(RolesGuard)
+  @Roles('ad', 'st', 'fa', 'hod', 'pr', 'pa')
+  async user(@Args('userId') userId: string) {
+    return this.usersService.findOneById(userId);
   }
 }

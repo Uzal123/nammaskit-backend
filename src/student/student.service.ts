@@ -12,6 +12,7 @@ import { UsersService } from 'src/user/users.service';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 import { AuthService } from 'src/auth/auth.service';
 import { StudentResponse } from './dto/student.response';
+import { CreateResultInput } from 'src/result/dto/result.input';
 
 @Injectable()
 export class StudentService {
@@ -130,5 +131,32 @@ export class StudentService {
       { new: true },
     );
     return student;
+  }
+
+  // insert student result
+  async insertStudentResult(
+    createResultInput: CreateResultInput,
+  ): Promise<StudentResponse> {
+    const { studentId, results } = createResultInput;
+
+    const student = await this.studentModel
+      .findByIdAndUpdate(
+        studentId,
+        {
+          $push: {
+            semesterResults: {
+              $each: results,
+            },
+          },
+        },
+        { new: true },
+      )
+
+    // Return the updated student
+    const result = new StudentResponse();
+    result.student = student;
+    result.message = 'Student result inserted successfully';
+    result.success = true;
+    return result;
   }
 }

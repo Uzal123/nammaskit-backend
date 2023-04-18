@@ -22,7 +22,6 @@ export class Student {
   @Prop({ required: true })
   currentAddress: String;
 
-
   @Field(() => String)
   @Prop({ required: true })
   dob: String;
@@ -74,6 +73,28 @@ export class Student {
   @Field(() => String)
   @Prop({ required: true })
   semester: String;
+
+  @Field(() => [SemesterResult])
+  @Prop({ required: false, default: [] })
+  semesterResults: SemesterResult[];
+}
+
+@ObjectType()
+export class SemesterResult {
+  @Field(() => String)
+  semester: string;
+
+  @Field(() => [SubjectResult])
+  subjects: SubjectResult[];
+}
+
+@ObjectType()
+export class SubjectResult {
+  @Field(() => String)
+  subject: string;
+
+  @Field(() => Number)
+  marks: number;
 }
 
 export type StudentModel = Document & Student;

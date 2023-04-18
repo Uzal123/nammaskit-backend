@@ -6,6 +6,7 @@ import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
+import { TeacherResponse } from './dto/teacher.response';
 
 // student resolver class
 @Resolver()
@@ -29,26 +30,14 @@ export class TeacherResolver {
     return teachers;
   }
 
-  //student query
-  // @Query(() => Student)
-  // async student(@Args('studentInput') studentInput: StudentInput) {
-  //     return this.studentService.getStudent(studentInput);
-  // }
-
-  //getStudentByUserId query
-  // @Query(() => Student)
-  // async getStudentByUserId(@Args('userId') userId: string) {
-  //     return this.studentService.getStudentByUserId(userId);
-  // }
-
-  //getAllStudents query
-  // @Query(() => [Student])
-  // async getAllStudents() {
-  //     return this.studentService.getAllStudents();
-  // }
+  //getTeacherByUserId query
+  @Query(() => TeacherResponse)
+  async getTeacherByUserId(@Args('userId') userId: string) {
+    return this.teacherService.getTeacherByUserId(userId);
+  }
 
   //createStudent mutation
-  @Mutation(() => Teacher)
+  @Mutation(() => TeacherResponse)
   async createTeacher(
     @Args('createTeacherInput') createTeacherInput: CreateTeacherInput,
   ) {

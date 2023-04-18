@@ -48,6 +48,7 @@ export class TeacherService {
       role,
       gender,
     });
+
     if (!success && !user) {
       result.message = message;
       result.success = false;
@@ -83,6 +84,24 @@ export class TeacherService {
     return teachers;
   }
 
+  //get teacher by user id
+  async getTeacherByUserId(userId: string): Promise<TeacherResponse> {
+    const result = new TeacherResponse();
+    const teacher = await this.teacherModel
+      .findOne({ user: userId })
+      .populate('user');
+    if (!teacher) {
+      result.message = 'Teacher not found';
+      result.success = false;
+      return result;
+    } else {
+      result.message = 'Teacher found';
+      result.success = true;
+      result.teacher = teacher;
+      return result;
+    }
+  }
+
   async findTeachersByAllowedRoles(
     allowedRoles: AllowedRole[],
   ): Promise<Teacher[]> {
@@ -109,3 +128,4 @@ export class TeacherService {
     return teachers;
   }
 }
+

@@ -8,6 +8,10 @@ import { User, UserModel } from '../models/user.model';
 import { CreateUserInput } from './dto/create.user.input';
 import { ProfileService } from 'src/profile/profile.service';
 import * as jwt from 'jsonwebtoken';
+// import { StudentResponse } from 'src/student/dto/student.response';
+// import { TeacherResponse } from 'src/teacher/dto/teacher.response';
+// import { StudentService } from 'src/student/student.service';
+// import { TeacherService } from 'src/teacher/teacher.service';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +22,8 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
     private readonly requestService: RequestService,
     private readonly profileService: ProfileService,
+    // private readonly studentService: StudentService,
+    // private readonly teacherService: TeacherService,
   ) {}
 
   async create(
@@ -61,6 +67,26 @@ export class UsersService {
     }
     return result;
   }
+
+//   async findUserById(id: string): Promise<StudentResponse | TeacherResponse> {
+//     const user = await this.userModel.findById(id).exec();
+//     if (user.role === AllowedRole.st) {
+//       const student = await this.studentService.getStudentByUserId(id);
+//       const result = new StudentResponse();
+//       result.success = true;
+//       result.message = 'Student found';
+//       result.student = student;
+//       return result;
+//     } else if (
+//       user.role === AllowedRole.fa ||
+//       user.role === AllowedRole.hod ||
+//       user.role === AllowedRole.pr ||
+//       user.role === AllowedRole.ad
+//     ) {
+//       const result = await this.teacherService.getTeacherByUserId(id);
+//       return result;
+//     }
+//   }
 
   async findOneById(id: string): Promise<UserModel | undefined> {
     return this.userModel.findById(id).exec();
@@ -125,7 +151,6 @@ export class UsersService {
 
     return user;
   }
-
 
   public getToken(user: UserModel): string {
     const expiresIn = process.env.JWT_EXPIRES_IN;

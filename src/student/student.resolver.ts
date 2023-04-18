@@ -10,6 +10,7 @@ import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
 import { StudentResponse } from './dto/student.response';
+import { CreateResultInput } from 'src/result/dto/result.input';
 
 // student resolver class
 @Resolver()
@@ -32,6 +33,13 @@ export class StudentResolver {
   @Query(() => [Student])
   async getAllStudents() {
     return this.studentService.getAllStudents();
+  }
+
+  @Mutation(() => StudentResponse)
+  async createResults(
+    @Args('createResultInput') createResultInput: CreateResultInput,
+  ) {
+    return this.studentService.insertStudentResult(createResultInput);
   }
 
   //createStudent mutation
