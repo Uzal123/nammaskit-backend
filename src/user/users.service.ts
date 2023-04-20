@@ -83,7 +83,11 @@ export class UsersService {
 //       user.role === AllowedRole.pr ||
 //       user.role === AllowedRole.ad
 //     ) {
-//       const result = await this.teacherService.getTeacherByUserId(id);
+//       const result = new TeacherResponse();
+//       const teacher = await this.teacherService.getTeacherByUserId(id);
+//       result.success = true;
+//       result.message = 'Teacher found';
+//       result.teacher = teacher;
 //       return result;
 //     }
 //   }

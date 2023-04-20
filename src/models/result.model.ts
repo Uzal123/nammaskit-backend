@@ -5,15 +5,15 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Student } from './student.model';
 
 @ObjectType()
-@Schema({ timestamps: false, versionKey: false, autoIndex: false })
+@Schema({ timestamps: true })
 export class SubjectMarks {
   @Field(() => String)
   @Prop({ required: false })
   subcode: string;
 
-  @Field(() => String)
+  @Field(() => Number)
   @Prop({ required: false })
-  ObtainedMark: string;
+  ObtainedMark: number;
 
   @Field(() => Number)
   @Prop({ required: false, default: 100 })
@@ -37,12 +37,16 @@ export class IAMarks {
 @ObjectType()
 @Schema({ timestamps: true })
 export class Result {
-  @Field(() => String, { description: 'The profileId id', nullable: false })
+  @Field(() => String, { description: 'The result id', nullable: false })
   _id: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Student.name })
   @Field(() => Student)
   student: Student | string;
+
+  @Field(() => Number)
+  @Prop({ required: true, unique: true })
+  semester: number;
 
   @Field(() => [SubjectMarks], { defaultValue: [] })
   @Prop({ required: false, default: [] })

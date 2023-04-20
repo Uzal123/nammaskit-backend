@@ -12,7 +12,6 @@ import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 
 @Injectable()
 export class TeacherService {
-  userModel: any;
   constructor(
     @InjectModel(Teacher.name)
     private readonly teacherModel: Model<TeacherModel>,
@@ -93,6 +92,7 @@ export class TeacherService {
     if (!teacher) {
       result.message = 'Teacher not found';
       result.success = false;
+      result.teacher = null;
       return result;
     } else {
       result.message = 'Teacher found';
@@ -128,4 +128,3 @@ export class TeacherService {
     return teachers;
   }
 }
-

@@ -24,7 +24,7 @@ export class StudentResolver {
   }
 
   //getStudentByUserId query
-  @Query(() => Student)
+  @Query(() => StudentResponse)
   async getStudentByUserId(@Args('userId') userId: string) {
     return this.studentService.getStudentByUserId(userId);
   }

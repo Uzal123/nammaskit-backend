@@ -8,17 +8,18 @@ import { AuthModule } from 'src/auth/auth.module';
 import { Otp, OtpSchema } from 'src/models/otp.model';
 import { StudentService } from 'src/student/student.service';
 import { StudentResolver } from 'src/student/student.resolver';
+import { StudentModule } from 'src/student/student.module';
+import { Result, ResultSchema } from 'src/models/result.model';
+import { ResultResolver } from './result.resolver';
+import { ResultService } from './result.service';
 
 //student module class
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Student.name, schema: StudentSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Result.name, schema: ResultSchema }]),
     StudentModule,
-    AuthModule,
   ],
-  providers: [RequestService, StudentResolver, AuthService, StudentService],
-  exports: [StudentService],
+  providers: [RequestService, ResultResolver, ResultService],
+  exports: [ResultService],
 })
-export class StudentModule {}
+export class ResultModule {}

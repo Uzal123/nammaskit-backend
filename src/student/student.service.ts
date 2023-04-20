@@ -31,11 +31,21 @@ export class StudentService {
     return student;
   }
 
-  async getStudentByUserId(userId: string) {
+  async getStudentByUserId(userId: string): Promise<StudentResponse> {
+    const result = new StudentResponse();
     const student = await this.studentModel
       .findOne({ user: userId })
       .populate('user');
-    return student;
+    if (!student) {
+      result.message = 'Student not found';
+      result.success = false;
+      result.student = null;
+      return result;
+    }
+    result.message = 'Student found';
+    result.success = true;
+    result.student = student;
+    return result;
   }
 
   async getAllStudents() {
@@ -137,20 +147,19 @@ export class StudentService {
   async insertStudentResult(
     createResultInput: CreateResultInput,
   ): Promise<StudentResponse> {
-    const { studentId, results } = createResultInput;
+    const { studentId, semester,subjects } = createResultInput;
 
-    const student = await this.studentModel
-      .findByIdAndUpdate(
-        studentId,
-        {
-          $push: {
-            semesterResults: {
-              $each: results,
-            },
+    const student = await this.studentModel.findByIdAndUpdate(
+      studentId,
+      {
+        $push: {
+          semesterResults: {
+            $each: subjects,
           },
         },
-        { new: true },
-      )
+      },
+      { new: true },
+    );
 
     // Return the updated student
     const result = new StudentResponse();
