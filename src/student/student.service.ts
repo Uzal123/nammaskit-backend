@@ -132,6 +132,28 @@ export class StudentService {
     return result;
   }
 
+  async addProctortoStudents(studentIds: string[], proctorId: string) {
+    const students = await this.studentModel.updateMany(
+      { _id: { $in: studentIds } },
+      { proctor: proctorId },
+    );
+    return students;
+  }
+
+  async getStudentsByProctorId(proctorId: string) {
+    const students = await this.studentModel
+      .find({ proctor: proctorId })
+      .populate('user');
+    return students;
+  }
+
+  async getStudentsByDepartment(department: string) {
+    const students = await this.studentModel
+      .find({ department: department })
+      .populate('user');
+    return students;
+  }
+
   async updateStudent(updateStudentInput: UpdateStudentInput) {
     const student = await this.studentModel.findOneAndUpdate(
       { _id: updateStudentInput._id },
@@ -147,7 +169,7 @@ export class StudentService {
   async insertStudentResult(
     createResultInput: CreateResultInput,
   ): Promise<StudentResponse> {
-    const { studentId, semester,subjects } = createResultInput;
+    const { studentId, semester, subjects } = createResultInput;
 
     const student = await this.studentModel.findByIdAndUpdate(
       studentId,

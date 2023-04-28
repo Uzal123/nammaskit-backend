@@ -18,6 +18,7 @@ import { SmsModule } from './sms/sms.module';
 import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { ResultModule } from './result/result.module';
+import { DepartmentModule } from './department/department.module';
 
 // export interface GqlContext {
 //   req: Request;
@@ -99,8 +100,8 @@ import { ResultModule } from './result/result.module';
     ProductModule,
     UploadModule,
     ChatModule,
-    SmsModule,
     ResultModule,
+    DepartmentModule
   ],
 })
 export class AppModule {}

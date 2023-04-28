@@ -3,6 +3,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Schema as MongooseSchema } from 'mongoose';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { AllowedDepartment } from 'src/common/dto/allowed.departments.enum';
+import { Teacher } from './teacher.model';
+import { Department } from './department.model';
 
 @ObjectType()
 @Schema({ timestamps: true })
@@ -73,6 +75,10 @@ export class Student {
   @Field(() => String)
   @Prop({ required: true })
   semester: String;
+
+  @Field(() => Teacher)
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'teacher' })
+  proctor: Teacher;
 
   @Field(() => [SemesterResult])
   @Prop({ required: false, default: [] })
