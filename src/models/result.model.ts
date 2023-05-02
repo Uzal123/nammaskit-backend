@@ -20,6 +20,8 @@ export class SubjectMarks {
   fullMark: number;
 }
 
+@ObjectType()
+@Schema({ timestamps: true })
 export class IAMarks {
   @Field(() => String)
   @Prop({ required: false })
@@ -47,6 +49,8 @@ export class Result {
   @Field(() => Number)
   @Prop({ required: true, unique: true })
   semester: number;
+
+  
 
   @Field(() => [SubjectMarks], { defaultValue: [] })
   @Prop({ required: false, default: [] })

@@ -80,9 +80,6 @@ export class Student {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'teacher' })
   proctor: Teacher;
 
-  @Field(() => [SemesterResult])
-  @Prop({ required: false, default: [] })
-  semesterResults: SemesterResult[];
 }
 
 @ObjectType()
