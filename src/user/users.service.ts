@@ -8,6 +8,9 @@ import { User, UserModel } from '../models/user.model';
 import { CreateUserInput } from './dto/create.user.input';
 import { ProfileService } from 'src/profile/profile.service';
 import * as jwt from 'jsonwebtoken';
+import { MyDeptSemResponse } from './dto/response.mydeptsem';
+import { StudentService } from 'src/student/student.service';
+import { TeacherService } from 'src/teacher/teacher.service';
 // import { StudentResponse } from 'src/student/dto/student.response';
 // import { TeacherResponse } from 'src/teacher/dto/teacher.response';
 // import { StudentService } from 'src/student/student.service';
@@ -21,7 +24,6 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
     private readonly requestService: RequestService,
-    private readonly profileService: ProfileService,
     // private readonly studentService: StudentService,
     // private readonly teacherService: TeacherService,
   ) {}
@@ -51,6 +53,33 @@ export class UsersService {
     return user;
   }
 
+  // get my department and semester
+//   async getMyDepartmentAndSemester(): Promise<MyDeptSemResponse> {
+//     const user = await this.findOneById(this.requestService.getUserId());
+//     if (user && user.role === AllowedRole.st) {
+//       const student = await this.studentService.getStudentByUserId(user._id);
+//       const result = new MyDeptSemResponse();
+//       result.success = true;
+//       result.message = 'Student found';
+//       result.deptId = student.student.department.toString();
+//       result.semester = student.student.semester;
+//       return result;
+//     } else if (user && user.role === AllowedRole.fa) {
+//       const teacher = await this.teacherService.getTeacherByUserId(user._id);
+//       const result = new MyDeptSemResponse();
+//       result.success = true;
+//       result.message = 'Teacher found';
+//       result.deptId = teacher.teacher.department;
+//       result.semester = null;
+//       return result;
+//     } else {
+//       const result = new MyDeptSemResponse();
+//       result.success = false;
+//       result.message = 'User not found';
+//       return result;
+//     }
+//   }
+
   async me(): Promise<UserResponse> {
     const result = new UserResponse();
     const user = await this.findOneById(this.requestService.getUserId());
@@ -68,33 +97,37 @@ export class UsersService {
     return result;
   }
 
-//   async findUserById(id: string): Promise<StudentResponse | TeacherResponse> {
-//     const user = await this.userModel.findById(id).exec();
-//     if (user.role === AllowedRole.st) {
-//       const student = await this.studentService.getStudentByUserId(id);
-//       const result = new StudentResponse();
-//       result.success = true;
-//       result.message = 'Student found';
-//       result.student = student;
-//       return result;
-//     } else if (
-//       user.role === AllowedRole.fa ||
-//       user.role === AllowedRole.hod ||
-//       user.role === AllowedRole.pr ||
-//       user.role === AllowedRole.ad
-//     ) {
-//       const result = new TeacherResponse();
-//       const teacher = await this.teacherService.getTeacherByUserId(id);
-//       result.success = true;
-//       result.message = 'Teacher found';
-//       result.teacher = teacher;
-//       return result;
-//     }
-//   }
+  //   async findUserById(id: string): Promise<StudentResponse | TeacherResponse> {
+  //     const user = await this.userModel.findById(id).exec();
+  //     if (user.role === AllowedRole.st) {
+  //       const student = await this.studentService.getStudentByUserId(id);
+  //       const result = new StudentResponse();
+  //       result.success = true;
+  //       result.message = 'Student found';
+  //       result.student = student;
+  //       return result;
+  //     } else if (
+  //       user.role === AllowedRole.fa ||
+  //       user.role === AllowedRole.hod ||
+  //       user.role === AllowedRole.pr ||
+  //       user.role === AllowedRole.ad
+  //     ) {
+  //       const result = new TeacherResponse();
+  //       const teacher = await this.teacherService.getTeacherByUserId(id);
+  //       result.success = true;
+  //       result.message = 'Teacher found';
+  //       result.teacher = teacher;
+  //       return result;
+  //     }
+  //   }
 
   async findOneById(id: string): Promise<UserModel | undefined> {
     return this.userModel.findById(id).exec();
   }
+
+  async findByIdAndDelete(id: string): Promise<UserModel | undefined> {
+    return this.userModel.findByIdAndDelete(id).exec();
+    }
 
   async findOneByUsername(username: string): Promise<UserModel | undefined> {
     return this.userModel.findOne({ username: username }).exec();
@@ -139,6 +172,8 @@ export class UsersService {
         'accessToken',
         'password',
         'salt',
+        'createdAt',
+        'updatedAt',
         'phone',
         'verifiedPhone',
       ]);

@@ -2,7 +2,6 @@ import { User } from './user.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Schema as MongooseSchema } from 'mongoose';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { AllowedDepartment } from 'src/common/dto/allowed.departments.enum';
 import { Teacher } from './teacher.model';
 import { Department } from './department.model';
 
@@ -14,7 +13,7 @@ export class Student {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   @Field(() => User)
-  user: User | string;
+  user: User;
 
   @Field(() => String)
   @Prop({ required: false })
@@ -24,17 +23,17 @@ export class Student {
   @Prop({ required: true })
   currentAddress: String;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Prop({ required: true })
-  dob: String;
+  dob: Date;
 
   @Field(() => String)
   @Prop({ required: false })
   category: String;
 
-  @Field(() => AllowedDepartment)
-  @Prop({ required: true })
-  department: AllowedDepartment;
+  @Field(() => Department)
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Department.name })
+  department: Department | string;
 
   @Field(() => String)
   @Prop({ required: true })
@@ -64,6 +63,10 @@ export class Student {
   @Prop({ required: true })
   entranceExamMarks: String;
 
+  @Field(() => Boolean, { nullable: true })
+  @Prop({ required: false })
+  isEligible: Boolean;
+
   @Field(() => String)
   @Prop({ required: true })
   parmanentAddress: String;
@@ -72,14 +75,17 @@ export class Student {
   @Prop({ required: true })
   course: String;
 
-  @Field(() => String)
+  @Field(() => Number)
   @Prop({ required: true })
-  semester: String;
+  semester: number;
 
-  @Field(() => Teacher)
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'teacher' })
-  proctor: Teacher;
-
+  @Field(() => Teacher, { nullable: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Teacher.name,
+    nullable: true,
+  })
+  proctor: Teacher | null | undefined;
 }
 
 @ObjectType()

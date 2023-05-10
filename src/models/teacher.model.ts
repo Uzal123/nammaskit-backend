@@ -2,8 +2,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Schema as MongooseSchema } from 'mongoose';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { AllowedDepartment } from 'src/common/dto/allowed.departments.enum';
 import { User } from './user.model';
+import { Department } from './department.model';
 
 @ObjectType()
 @Schema({ timestamps: true })
@@ -13,11 +13,11 @@ export class Teacher {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   @Field(() => User)
-  user: User | string;
+  user: User ;
 
-  @Field(() => AllowedDepartment)
-  @Prop({ required: true })
-  department: AllowedDepartment;
+  @Field(() => Department)
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Department.name })
+  department: Department | string;
 
   @Field(() => String)
   @Prop({ required: true })

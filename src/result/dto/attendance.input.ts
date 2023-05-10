@@ -2,16 +2,19 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ResultType } from 'src/common/dto/result.type.enum';
 
 @InputType()
-export class CreateResultInput {
+export class CreateAttendanceInput {
   @Field(() => String)
-  usn: string;
-
-  @Field(() => Number)
-  obtainedMark: number;
+  subject: string;
 
   @Field(() => ResultType)
-  resultType: ResultType;
+  attendanceFor: ResultType;
+
+  @Field(() => Number)
+  workingDay: number;
+
+  @Field(() => Number)
+  presentDay: number;
 
   @Field(() => String)
-  subjectCode: string;
+  student: string;
 }

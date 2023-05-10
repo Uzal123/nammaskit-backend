@@ -7,8 +7,8 @@ import { UsersService } from 'src/user/users.service';
 import { Teacher, TeacherModel } from 'src/models/teacher.model';
 import { AuthService } from 'src/auth/auth.service';
 import { TeacherResponse } from './dto/teacher.response';
-import { User, UserModel } from 'src/models/user.model';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
+import { UpdateTeacherInput } from './dto/update.teacher.input';
 
 @Injectable()
 export class TeacherService {
@@ -63,7 +63,7 @@ export class TeacherService {
         experience,
         qualification,
       })
-    ).populate('user');
+    ).populate(['user', 'department']);
 
     if (!teacher) {
       result.message = 'Unable to create teacher';
@@ -77,9 +77,57 @@ export class TeacherService {
     }
   }
 
+  //update teacher by id
+  async updateTeacherById(
+    updateTeacherInput: UpdateTeacherInput,
+  ): Promise<TeacherResponse> {
+    const result = new TeacherResponse();
+    const { _id } = updateTeacherInput;
+    const teacher = await this.teacherModel
+      .findByIdAndUpdate(_id, { ...updateTeacherInput }, { new: true })
+      .populate(['user', 'department']);
+    if (!teacher) {
+      result.message = 'Teacher not found';
+      result.success = false;
+      return result;
+    } else {
+      result.message = 'Teacher updated successfully';
+      result.success = true;
+      result.teacher = teacher;
+      return result;
+    }
+  }
+
+  // delete teacher by id
+  async deleteTeacherById(id: string): Promise<TeacherResponse> {
+    const result = new TeacherResponse();
+    const teacher = await this.teacherModel.findByIdAndDelete(id);
+
+    if (!teacher) {
+      result.message = 'Teacher not found';
+      result.success = false;
+      return result;
+    } else {
+      const userId = teacher.user._id;
+      await this.userService.findByIdAndDelete(userId.toString());
+
+      result.message = 'Teacher deleted successfully';
+      result.success = true;
+      return result;
+    }
+  }
+
+  // get total number of teachers
+  async getTotalNumberOfTeachers(): Promise<number> {
+    const totalTeachers = await this.teacherModel.countDocuments();
+    return totalTeachers;
+  }
+
   // Get all teachers
   async getAllTeachers() {
-    const teachers = await this.teacherModel.find().populate('user');
+    const teachers = await this.teacherModel
+      .find()
+      .populate(['user', 'department']);
     return teachers;
   }
 
@@ -88,7 +136,7 @@ export class TeacherService {
     const result = new TeacherResponse();
     const teacher = await this.teacherModel
       .findOne({ user: userId })
-      .populate('user');
+      .populate(['user', 'department']);
     if (!teacher) {
       result.message = 'Teacher not found';
       result.success = false;

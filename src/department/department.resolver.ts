@@ -6,6 +6,7 @@ import { DepartmentResponse } from './dto/department.response';
 import { SubjectResponse } from './dto/subject.response';
 import { SubjectsResponse } from './dto/subjects.response';
 import { DepartmentsResponse } from './dto/all.department.response';
+import { UpdateSubjectInput } from './dto/update.subject.input';
 
 @Resolver()
 export class DepartmentResolver {
@@ -16,6 +17,20 @@ export class DepartmentResolver {
     @Args('createDepartmentInput') createDepartmentInput: CreateDepartmentInput,
   ): Promise<DepartmentResponse> {
     return this.departmentService.createDepartment(createDepartmentInput);
+  }
+
+  @Mutation(() => DepartmentResponse)
+  async deleteDepartment(
+    @Args('departmentId') departmentId: string,
+  ): Promise<DepartmentResponse> {
+    return this.departmentService.deleteDepartment(departmentId);
+  }
+
+  @Mutation(() => SubjectResponse)
+  async updateSubject(
+    @Args('updateSubjectInput') updateSubjectInput: UpdateSubjectInput,
+  ): Promise<SubjectResponse> {
+    return this.departmentService.updateSubject(updateSubjectInput);
   }
 
   @Mutation(() => SubjectResponse)
@@ -35,12 +50,36 @@ export class DepartmentResolver {
     );
   }
 
+  @Query(() => Number)
+  async getTotalDepartments(): Promise<number> {
+    return this.departmentService.totalDepartments();
+  }
+
+  @Query(() => Number)
+  async getTotalSubjects(): Promise<number> {
+    return this.departmentService.totalSubjects();
+  }
+
   @Query(() => SubjectsResponse)
   async getSubjects(
     @Args('department') department: string,
     @Args('semester') semester: number,
   ): Promise<SubjectsResponse> {
     return this.departmentService.getSubjectsInSemester(department, semester);
+  }
+
+  @Query(() => SubjectResponse)
+  async getSubjectByCode(
+    @Args('subjectCode') subjectCode: string,
+  ): Promise<SubjectResponse> {
+    return this.departmentService.getSubjectBySubjectCode(subjectCode);
+  }
+
+  @Mutation(() => SubjectResponse)
+  async deleteSubject(
+    @Args('subjectId') subjectId: string,
+  ): Promise<SubjectResponse> {
+    return this.departmentService.deleteSubject(subjectId);
   }
 
   @Query(() => DepartmentsResponse)

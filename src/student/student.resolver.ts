@@ -1,16 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Student } from 'src/models/student.model';
-import {
-  CreateStudentInput,
-  StudentInput,
-  UpdateStudentInput,
-} from './dto/create.student.input';
+import { CreateStudentInput, StudentInput } from './dto/create.student.input';
 import { StudentService } from './student.service';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
 import { StudentResponse } from './dto/student.response';
 import { CreateResultInput } from 'src/result/dto/result.input';
+import { UpdateStudentInput } from './dto/update.student.input';
 
 // student resolver class
 @Resolver()
@@ -29,17 +26,22 @@ export class StudentResolver {
     return this.studentService.getStudentByUserId(userId);
   }
 
+  //getStudentByUSN query
+  @Query(() => StudentResponse)
+  async getStudentByUSN(@Args('usn') usn: string) {
+    return this.studentService.getStudentByUSN(usn);
+  }
+
   //getAllStudents query
   @Query(() => [Student])
   async getAllStudents() {
     return this.studentService.getAllStudents();
   }
 
-  @Mutation(() => StudentResponse)
-  async createResults(
-    @Args('createResultInput') createResultInput: CreateResultInput,
-  ) {
-    return this.studentService.insertStudentResult(createResultInput);
+  //totalStudents query
+  @Query(() => Number)
+  async totalStudents() {
+    return this.studentService.getTotalStudents();
   }
 
   //createStudent mutation

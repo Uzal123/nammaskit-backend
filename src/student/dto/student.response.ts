@@ -8,5 +8,5 @@ export class StudentResponse {
   @Field(() => String)
   message: string;
   @Field(() => Student, { nullable: true })
-  student: Student;
+  student: Student | null;
 }

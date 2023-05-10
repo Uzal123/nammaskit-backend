@@ -18,10 +18,10 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse, { name: 'login', description: 'Login' })
   async login(
-    @Args('phone', { type: () => Number }) phone: number,
+    @Args('email', { type: () => String }) email: string,
     @Args('password', { type: () => String }) password: string,
   ) {
-    return this.authService.login(phone, password);
+    return this.authService.login(email, password);
   }
 
   @Mutation(() => AuthResponse, { name: 'loginAdmin', description: 'Login' })

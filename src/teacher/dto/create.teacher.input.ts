@@ -38,24 +38,24 @@ export class CreateTeacherInput {
   phone: number;
 
 
-  @Field(() => AllowedDepartment)
-  @Prop({ required: true })
-  department: AllowedDepartment;
+  @Field(() => String)
+  @Prop({ required: false })
+  department: string;
 
   @Field(() => String)
   @Prop({ required: true })
-  designation: String;
+  designation: string;
 
   @Field(() => String)
   @Prop({ required: true })
-  qualification: String;
+  qualification: string;
 
   @Field(() => String)
   @Prop({ required: true })
-  experience: String;
+  experience: string;
 
   @Field(() => String)
   @Prop({ required: true })
-  address: String;
+  address: string;
 }
 

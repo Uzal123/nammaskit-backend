@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Schema as MongooseSchema } from 'mongoose';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Teacher } from './teacher.model';
 
 @ObjectType()
 @Schema({ timestamps: true })
@@ -41,7 +42,7 @@ export class Subject {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Department',
   })
-  department: Department;
+  department: Department | string;
 
   @Field(() => Number)
   @Prop({
@@ -54,9 +55,11 @@ export class Subject {
   subjectCode: string;
 
   @Field(() => String)
+  @Prop({ required: true })
   subjectType: string;
 
   @Field(() => Number)
+  @Prop({ required: true })
   subjectCredits: number;
 
   @Field(() => String)

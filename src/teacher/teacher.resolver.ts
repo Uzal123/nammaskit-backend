@@ -7,6 +7,7 @@ import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
 import { TeacherResponse } from './dto/teacher.response';
+import { UpdateTeacherInput } from './dto/update.teacher.input';
 
 // student resolver class
 @Resolver()
@@ -17,6 +18,24 @@ export class TeacherResolver {
   @Query(() => [Teacher])
   async getAllTeachers() {
     return this.teacherService.getAllTeachers();
+  }
+
+  @Mutation(() => TeacherResponse)
+  async updateTeacher(
+    @Args('updateTeacherInput') updateTeacherInput: UpdateTeacherInput,
+  ) {
+    return this.teacherService.updateTeacherById(updateTeacherInput);
+  }
+
+  @Mutation(() => TeacherResponse)
+  async deleteTeacher(@Args('teacherId') teacherId: string) {
+    return this.teacherService.deleteTeacherById(teacherId);
+  }
+
+  // totalTeachers query
+  @Query(() => Number)
+  async totalTeachers() {
+    return this.teacherService.getTotalNumberOfTeachers();
   }
 
   @Query(() => [Teacher])

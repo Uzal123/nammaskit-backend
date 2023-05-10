@@ -12,6 +12,7 @@ export class CreateDepartmentInput {
   @Prop({ required: true, unique: true })
   deptCode: string;
 
+
   @Field(() => Number)
   @Prop({ required: true })
   numberOfSemesters: number;

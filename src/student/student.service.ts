@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Student, StudentModel } from 'src/models/student.model';
 import { Model } from 'mongoose';
-import {
-  CreateStudentInput,
-  StudentInput,
-  UpdateStudentInput,
-} from './dto/create.student.input';
+import { CreateStudentInput, StudentInput } from './dto/create.student.input';
 import { RequestService } from 'src/request.service';
 import { UsersService } from 'src/user/users.service';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 import { AuthService } from 'src/auth/auth.service';
 import { StudentResponse } from './dto/student.response';
 import { CreateResultInput } from 'src/result/dto/result.input';
+import { UpdateStudentInput } from './dto/update.student.input';
 
 @Injectable()
 export class StudentService {
@@ -31,11 +28,11 @@ export class StudentService {
     return student;
   }
 
-  async getStudentByUserId(userId: string): Promise<StudentResponse> {
+  async getStudentById(studentId: string): Promise<StudentResponse> {
     const result = new StudentResponse();
     const student = await this.studentModel
-      .findOne({ user: userId })
-      .populate('user');
+      .findById(studentId)
+      .populate(['user', 'department', 'proctor']);
     if (!student) {
       result.message = 'Student not found';
       result.success = false;
@@ -48,8 +45,71 @@ export class StudentService {
     return result;
   }
 
-  async getAllStudents() {
-    const students = await this.studentModel.find().populate('user');
+  async updateStudentProctor(studentId: string, proctorId: string) {
+    const student = await this.studentModel
+      .findOneAndUpdate(
+        { _id: studentId },
+        { proctor: proctorId },
+        { new: true },
+      )
+      .populate('user');
+    return student;
+  }
+
+  async updateStudentsProctor(studentIds: string[], proctorId: string) {
+    const students = await this.studentModel
+      .updateMany(
+        { _id: { $in: studentIds } },
+        { proctor: proctorId },
+        { new: true },
+      )
+      .populate('user');
+    return students;
+  }
+
+  async getStudentByUserId(userId: string): Promise<StudentResponse> {
+    const result = new StudentResponse();
+    const student = await this.studentModel
+      .findOne({ user: userId })
+      .populate(['user', 'department', 'proctor']);
+    if (!student) {
+      result.message = 'Student not found';
+      result.success = false;
+      result.student = null;
+      return result;
+    }
+    result.message = 'Student found';
+    result.success = true;
+    result.student = student;
+    return result;
+  }
+
+  async getTotalStudents(): Promise<number> {
+    const totalStudents = await this.studentModel.countDocuments();
+    return totalStudents;
+  }
+
+  async getStudentByUSN(usn: string): Promise<StudentResponse> {
+    const result = new StudentResponse();
+    const student = await this.studentModel
+      .findOne({ usn: usn })
+      .populate(['user', 'department', 'proctor']);
+    if (!student) {
+      result.message = 'Student not found';
+      result.success = false;
+      result.student = null;
+      return result;
+    }
+    result.message = 'Student found';
+    result.success = true;
+    result.student = student;
+    return result;
+  }
+
+  async getAllStudents(): Promise<Student[]> {
+    const students = await this.studentModel
+      .find()
+      .populate(['user', 'department', 'proctor']);
     return students;
   }
 
@@ -117,7 +177,7 @@ export class StudentService {
           usn,
           phone,
         })
-      ).populate('user');
+      ).populate(['user', 'department', 'proctor']);
       if (!student) {
         result.message = 'Student not created';
         result.success = false;
@@ -155,40 +215,36 @@ export class StudentService {
   }
 
   async updateStudent(updateStudentInput: UpdateStudentInput) {
-    const student = await this.studentModel.findOneAndUpdate(
-      { _id: updateStudentInput._id },
-      {
-        ...updateStudentInput,
-      },
-      { new: true },
-    );
+    const student = await this.studentModel
+      .findOneAndUpdate(
+        { _id: updateStudentInput._id },
+        {
+          ...updateStudentInput,
+        },
+        { new: true },
+      )
+      .populate(['user', 'department', 'proctor']);
     return student;
   }
 
-
-  // insert student result
-  async insertStudentResult(
-    createResultInput: CreateResultInput,
-  ): Promise<StudentResponse> {
-    const { studentId, semester, subjects } = createResultInput;
-
-    const student = await this.studentModel.findByIdAndUpdate(
-      studentId,
-      {
-        $push: {
-          semesterResults: {
-            $each: subjects,
-          },
-        },
-      },
-      { new: true },
-    );
-
-    // Return the updated student
+  //delete student
+  async deleteStudentById(id: string): Promise<StudentResponse> {
     const result = new StudentResponse();
-    result.student = student;
-    result.message = 'Student result inserted successfully';
-    result.success = true;
-    return result;
+    const student = await this.studentModel
+      .findByIdAndDelete(id)
+      .populate(['user', 'department', 'proctor']);
+
+    if (!student) {
+      result.message = 'Student not found';
+      result.success = false;
+      return result;
+    } else {
+      const userId = student.user._id.toString();
+      await this.userService.findByIdAndDelete(userId);
+
+      result.message = 'Student deleted successfully';
+      result.success = true;
+      return result;
+    }
   }
 }

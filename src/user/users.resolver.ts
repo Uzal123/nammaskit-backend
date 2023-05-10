@@ -5,6 +5,7 @@ import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
+import { MyDeptSemResponse } from './dto/response.mydeptsem';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -19,6 +20,7 @@ export class UsersResolver {
   async me() {
     return this.usersService.me();
   }
+
 
   @Query(() => User, {
     name: 'userbyID',
