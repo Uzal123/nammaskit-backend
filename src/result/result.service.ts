@@ -14,6 +14,7 @@ import { Attendance, AttendanceModel } from 'src/models/attendance.model';
 import { AttendanceResponse } from './dto/attendance.response';
 import { AttendancesResponse } from './dto/attendances.response';
 import { UpdateAttendanceInput } from './dto/update.attendance.input';
+import { FetchResultInput } from './dto/fetch.result.input';
 
 @Injectable()
 export class ResultService {
@@ -229,11 +230,11 @@ export class ResultService {
 
   // get results by student id and result type and semester
   async getResultsByStudentIdAndResultTypeAndSemester(
-    studentId: string,
-    resultType: ResultType[],
-    semester: number,
+    fetchResultInput: FetchResultInput,
   ): Promise<ResultsResponse> {
     const response = new ResultsResponse();
+    const { studentId, resultType, semester } = fetchResultInput;
+
     const results = await this.resultModel
       .find({
         student: studentId,

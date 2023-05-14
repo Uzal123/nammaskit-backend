@@ -10,6 +10,7 @@ import { CreateAttendanceInput } from './dto/attendance.input';
 import { AttendanceResponse } from './dto/attendance.response';
 import { UpdateAttendanceInput } from './dto/update.attendance.input';
 import { AttendancesResponse } from './dto/attendances.response';
+import { FetchResultInput } from './dto/fetch.result.input';
 
 @Resolver()
 export class ResultResolver {
@@ -50,14 +51,11 @@ export class ResultResolver {
 
   @Query(() => ResultsResponse)
   async getResultsByresultTypeAndSemester(
-    @Args('resultType', { type: () => [ResultType] }) resultType: ResultType[],
-    @Args('semester') semester: number,
-    @Args('studentId') studentId: string,
+    @Args('fetchResultInput', { type: () => FetchResultInput })
+    fetchResultInput: FetchResultInput,
   ) {
     return this.resultService.getResultsByStudentIdAndResultTypeAndSemester(
-      studentId,
-      resultType,
-      semester,
+      fetchResultInput,
     );
   }
 
