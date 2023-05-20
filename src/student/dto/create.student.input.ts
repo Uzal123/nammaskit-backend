@@ -17,6 +17,9 @@ export class CreateStudentInput {
   @Field(() => AllowedRole)
   role: AllowedRole;
 
+  @Field(() => String)
+  section: string;
+
   @Field(() => Number)
   phone: number;
 

@@ -56,16 +56,16 @@ export class StudentService {
     return student;
   }
 
-  async updateStudentsProctor(studentIds: string[], proctorId: string) {
-    const students = await this.studentModel
-      .updateMany(
-        { _id: { $in: studentIds } },
-        { proctor: proctorId },
-        { new: true },
-      )
-      .populate('user');
-    return students;
-  }
+  //   async updateStudentsProctor(studentIds: string[], proctorId: string) {
+  //     const students = await this.studentModel
+  //       .updateMany(
+  //         { _id: { $in: studentIds } },
+  //         { proctor: proctorId },
+  //         { new: true },
+  //       )
+  //       .populate('user');
+  //     return students;
+  //   }
 
   async getStudentByUserId(userId: string): Promise<StudentResponse> {
     const result = new StudentResponse();
@@ -192,13 +192,13 @@ export class StudentService {
     return result;
   }
 
-  async addProctortoStudents(studentIds: string[], proctorId: string) {
-    const students = await this.studentModel.updateMany(
-      { _id: { $in: studentIds } },
-      { proctor: proctorId },
-    );
-    return students;
-  }
+  //   async addProctortoStudents(studentIds: string[], proctorId: string) {
+  //     const students = await this.studentModel.updateMany(
+  //       { _id: { $in: studentIds } },
+  //       { proctor: proctorId },
+  //     );
+  //     return students;
+  //   }
 
   async getStudentsByProctorId(proctorId: string) {
     const students = await this.studentModel

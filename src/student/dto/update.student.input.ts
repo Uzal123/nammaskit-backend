@@ -17,6 +17,9 @@ export class UpdateStudentInput {
   dob: Date | null;
 
   @Field(() => String, { nullable: true })
+  section: string | null;
+
+  @Field(() => String, { nullable: true })
   category: string | null;
 
   @Field(() => Boolean, { nullable: true })

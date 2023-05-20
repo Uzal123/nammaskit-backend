@@ -13,7 +13,15 @@ export class UpdateSubjectInput {
 
   @Field(() => String, { nullable: true })
   @Prop({ required: true })
+  scheme: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Prop({ required: true })
   subjectCode: string | null;
+
+  @Field(() => [String], { nullable: true })
+  @Prop({ required: false })
+  teachers: string[];
 
   @Field(() => String, { nullable: true })
   @Prop({ required: false })

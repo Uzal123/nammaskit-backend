@@ -11,6 +11,10 @@ export class CreateSubjectInput {
   @Prop({ required: true })
   department: string;
 
+  @Field(() => String)
+  @Prop({ required: true })
+  scheme: string;
+
   @Field(() => Number)
   @Prop({
     required: true,
@@ -24,6 +28,10 @@ export class CreateSubjectInput {
   @Field(() => String)
   @Prop({ required: false })
   subjectType: string;
+
+  @Field(() => [String], { nullable: true })
+  @Prop({ required: false })
+  teachers: string[];
 
   @Field(() => Number)
   @Prop({ required: true })

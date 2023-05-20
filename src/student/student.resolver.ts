@@ -26,6 +26,12 @@ export class StudentResolver {
     return this.studentService.getStudentByUserId(userId);
   }
 
+  //getStudents by proctorId query
+  @Query(() => [Student])
+  async getStudentsByProctorId(@Args('proctorId') proctorId: string) {
+    return this.studentService.getStudentsByProctorId(proctorId);
+  }
+
   //getStudentByUSN query
   @Query(() => StudentResponse)
   async getStudentByUSN(@Args('usn') usn: string) {

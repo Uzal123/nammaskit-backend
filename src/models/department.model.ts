@@ -51,6 +51,10 @@ export class Subject {
   semester: number;
 
   @Field(() => String)
+  @Prop({ required: false })
+  scheme: string;
+
+  @Field(() => String)
   @Prop({ required: true, unique: true })
   subjectCode: string;
 
@@ -65,6 +69,13 @@ export class Subject {
   @Field(() => String)
   @Prop({ required: false })
   subjectDescription: string;
+
+  @Field(() => [Teacher], { nullable: true })
+  @Prop({
+    required: false,
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' }],
+  })
+  teachers: Teacher[] | string[];
 }
 
 export type SubjectModel = Document & Subject;

@@ -67,6 +67,10 @@ export class Student {
   @Prop({ required: false })
   isEligible: Boolean;
 
+  @Field(() => String, { nullable: true })
+  @Prop({ nullable: true })
+  section: String;
+
   @Field(() => String)
   @Prop({ required: true })
   parmanentAddress: String;
