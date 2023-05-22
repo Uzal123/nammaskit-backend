@@ -56,16 +56,7 @@ export class StudentService {
     return student;
   }
 
-  //   async updateStudentsProctor(studentIds: string[], proctorId: string) {
-  //     const students = await this.studentModel
-  //       .updateMany(
-  //         { _id: { $in: studentIds } },
-  //         { proctor: proctorId },
-  //         { new: true },
-  //       )
-  //       .populate('user');
-  //     return students;
-  //   }
+
 
   async getStudentByUserId(userId: string): Promise<StudentResponse> {
     const result = new StudentResponse();
