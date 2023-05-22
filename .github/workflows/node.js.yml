@@ -46,5 +46,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci --production
-    - run: nest start
+    - run: npm run start:prod
 
