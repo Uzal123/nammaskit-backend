@@ -28,6 +28,7 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+    - run : pwd
     
   deploy:
     needs: build
@@ -46,5 +47,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci --production
+    - run : pwd
     - run: npm run start:prod
 
