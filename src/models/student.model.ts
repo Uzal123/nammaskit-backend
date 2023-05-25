@@ -68,7 +68,7 @@ export class Student {
   isEligible: Boolean;
 
   @Field(() => String, { nullable: true })
-  @Prop({ nullable: true })
+  @Prop({ nullable: true, default: '' })
   section: String;
 
   @Field(() => String)

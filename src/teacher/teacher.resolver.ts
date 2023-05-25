@@ -63,6 +63,28 @@ export class TeacherResolver {
     return this.teacherService.createTeacher(createTeacherInput);
   }
 
+  //create multiple teachers
+  @Mutation(() => TeacherResponse)
+  async createMultipleTeachers(
+    @Args('createTeacherInputs', { type: () => [CreateTeacherInput] })
+    createTeacherInputs: CreateTeacherInput[],
+  ) {
+    return this.teacherService.createMultipleTeachers(createTeacherInputs);
+  }
+
+  //get teachers by department and role
+  @Query(() => TeacherResponse)
+  async getTeachersByDepartmentAndRole(
+    @Args('departmentId', { type: () => String }) departmentId: string,
+    @Args('allowedRoles', { type: () => [AllowedRole] })
+    allowedRoles: AllowedRole[],
+  ) {
+    return this.teacherService.findTeachersByAllowedRolesAndDepartment(
+      allowedRoles,
+      departmentId,
+    );
+  }
+
   //updateStudent mutation
   // @Mutation(() => Student)
   // async updateStudent(@Args('updateStudentInput') updateStudentInput: UpdateStudentInput) {

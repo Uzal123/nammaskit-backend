@@ -61,57 +61,6 @@ export class ResultService {
     return response;
   }
 
-  // create result
-  //   async createResult(
-  //     createResultInput: CreateResultInput,
-  //   ): Promise<ResultResponse> {
-  //     const response = new ResultResponse();
-  //     const student = await this.studentService.getStudentById(
-  //       createResultInput.student,
-  //     );
-
-  //     if (!student.success) {
-  //       response.message = 'Student not found';
-  //       response.success = false;
-  //       response.result = null;
-  //       return response;
-  //     }
-
-  //     const subject = await this.departmentService.getSubjectById(
-  //       createResultInput.subject,
-  //     );
-
-  //     if (!subject.success) {
-  //       response.message = 'Subject not found';
-  //       response.success = false;
-  //       response.result = null;
-  //       return response;
-  //     }
-
-  //     const resultExists = await this.getResultByStudentIdAndSemester(
-  //       createResultInput.student,
-  //       createResultInput.subject,
-  //       createResultInput.resultType,
-  //     );
-  //     if (resultExists) {
-  //       response.message = 'Result already exists';
-  //       response.success = false;
-  //       response.result = null;
-  //       return response;
-  //     }
-
-  //     const result = await (
-  //       await this.resultModel.create({
-  //         ...createResultInput,
-  //         student: student.student,
-  //       })
-  //     ).populate(['student', 'subject']);
-  //     response.message = 'Result created successfully';
-  //     response.success = true;
-  //     response.result = result;
-  //     return response;
-  //   }
-
   // create multiple results
   async createMultipleResults(
     createResultInput: CreateResultInput[],
@@ -120,6 +69,7 @@ export class ResultService {
     const results = [];
     for (const result of createResultInput) {
       const student = await this.studentService.getStudentByUSN(result.usn);
+      console.log(student);
       if (!student.success) {
         response.message = 'Student not found';
         response.success = false;
@@ -215,6 +165,31 @@ export class ResultService {
     const response = new ResultsResponse();
     const results = await this.resultModel
       .find({ student: studentId })
+      .populate(['student', 'student.user', 'subject']);
+    if (!results) {
+      response.message = 'Results not found';
+      response.success = false;
+      response.results = null;
+      return response;
+    }
+    response.message = 'Results found';
+    response.success = true;
+    response.results = results;
+    return response;
+  }
+
+  //get results by USN
+  async getResultsByUSN(usn: string): Promise<ResultsResponse> {
+    const response = new ResultsResponse();
+    const student = await this.studentService.getStudentByUSN(usn);
+    if (!student.success) {
+      response.message = 'Student not found';
+      response.success = false;
+      response.results = null;
+      return response;
+    }
+    const results = await this.resultModel
+      .find({ student: student.student._id })
       .populate(['student', 'student.user', 'subject']);
     if (!results) {
       response.message = 'Results not found';

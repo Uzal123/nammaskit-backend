@@ -28,4 +28,12 @@ export class UpdateTeacherInput {
   @Field(() => String, { nullable: true })
   @Prop({ required: false })
   address: string | null;
+
+  @Field(() => String, { nullable: true })
+  @Prop({ required: false })
+  email: string | null;
+
+  @Field(() => Number, { nullable: true })
+  @Prop({ required: false })
+  phone: number | null;
 }

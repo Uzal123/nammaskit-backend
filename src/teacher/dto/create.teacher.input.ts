@@ -3,7 +3,6 @@ import { Prop } from '@nestjs/mongoose';
 import { AllowedDepartment } from 'src/common/dto/allowed.departments.enum';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 
-
 @InputType()
 export class CreateTeacherInput {
   @Field(() => String, { description: 'The user full Name' })
@@ -29,14 +28,9 @@ export class CreateTeacherInput {
   @Prop({ required: false })
   email: string;
 
-  @Field(() => String, { description: 'Password is required', nullable: false })
-  @Prop({ required: true, select: false, defaultValue: '' })
-  password: string;
-
   @Field(() => Number, { description: 'Phone is required', nullable: true })
   @Prop({ required: false })
   phone: number;
-
 
   @Field(() => String)
   @Prop({ required: false })
@@ -58,4 +52,3 @@ export class CreateTeacherInput {
   @Prop({ required: true })
   address: string;
 }
-

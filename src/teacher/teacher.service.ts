@@ -27,7 +27,6 @@ export class TeacherService {
       firstName,
       lastName,
       phone,
-      password,
       email,
       gender,
       address,
@@ -42,7 +41,7 @@ export class TeacherService {
       firstName,
       lastName,
       phone,
-      password,
+      password: 'skit@teacher',
       email,
       role,
       gender,
@@ -72,9 +71,84 @@ export class TeacherService {
     } else {
       result.message = 'Teacher created successfully';
       result.success = true;
-      result.teacher = teacher;
+      result.teacher = [teacher];
       return result;
     }
+  }
+
+  async createMultipleTeachers(
+    createTeacherInputs: CreateTeacherInput[],
+  ): Promise<TeacherResponse> {
+    const results = new TeacherResponse();
+    results.teacher = [];
+
+    for (const createTeacherInput of createTeacherInputs) {
+      const result = new TeacherResponse();
+      const {
+        firstName,
+        lastName,
+        phone,
+        email,
+        gender,
+        address,
+        department,
+        designation,
+        role,
+        experience,
+        qualification,
+      } = createTeacherInput;
+
+      const { user, success, message } = await this.authService.register({
+        firstName,
+        lastName,
+        phone,
+        password: 'skit@teacher',
+        email,
+        role,
+        gender,
+      });
+
+      if (!success || !user) {
+        result.message = message;
+        result.success = false;
+        results.teacher.push(result.teacher[0]);
+        continue;
+      }
+
+      const teacher = await (
+        await this.teacherModel.create({
+          user: user._id,
+          address,
+          department,
+          designation,
+          experience,
+          qualification,
+        })
+      ).populate(['user', 'department']);
+
+      if (!teacher) {
+        result.message = 'Teacher not created';
+        result.success = false;
+        results.teacher.push(result.teacher[0]);
+        continue;
+      }
+
+      result.teacher = [teacher];
+      result.message = 'Teacher created successfully';
+      result.success = true;
+      results.teacher.push(result.teacher[0]);
+    }
+    results.message = 'Teachers created successfully';
+    results.success = true;
+    results.teacher = results.teacher.filter((teacher) => teacher !== null);
+    if (results.teacher.length === 0) {
+      results.success = false;
+      results.message = 'No Teacher were created';
+    } else {
+      results.message = 'Teachers created successfully';
+      results.success = true;
+    }
+    return results;
   }
 
   //update teacher by id
@@ -82,19 +156,45 @@ export class TeacherService {
     updateTeacherInput: UpdateTeacherInput,
   ): Promise<TeacherResponse> {
     const result = new TeacherResponse();
-    const { _id } = updateTeacherInput;
+    const {
+      _id,
+      address,
+      designation,
+      email,
+      experience,
+      phone,
+      qualification,
+      role,
+    } = updateTeacherInput;
     const teacher = await this.teacherModel
-      .findByIdAndUpdate(_id, { ...updateTeacherInput }, { new: true })
+      .findByIdAndUpdate(
+        _id,
+        { address, designation, experience, qualification },
+        { new: true },
+      )
       .populate(['user', 'department']);
     if (!teacher) {
       result.message = 'Teacher not found';
       result.success = false;
       return result;
     } else {
-      result.message = 'Teacher updated successfully';
-      result.success = true;
-      result.teacher = teacher;
-      return result;
+      const user = await this.userService.updateUser(
+        teacher.user._id.toString(),
+        email,
+        phone,
+        role,
+      );
+      if (user) {
+        teacher.user = user;
+        result.message = 'Teacher updated successfully';
+        result.success = true;
+        result.teacher = [teacher];
+        return result;
+      } else {
+        result.message = 'Error while Updating';
+        result.success = false;
+        result.teacher = null;
+      }
     }
   }
 
@@ -145,7 +245,7 @@ export class TeacherService {
     } else {
       result.message = 'Teacher found';
       result.success = true;
-      result.teacher = teacher;
+      result.teacher = [teacher];
       return result;
     }
   }
@@ -174,5 +274,44 @@ export class TeacherService {
       ])
       .exec();
     return teachers;
+  }
+
+  async findTeachersByAllowedRolesAndDepartment(
+    allowedRoles: AllowedRole[],
+    departmentId: string,
+  ): Promise<TeacherResponse> {
+    const result = new TeacherResponse();
+    const teachers: Teacher[] = await this.teacherModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $match: {
+            'user.role': { $in: allowedRoles },
+            // department: departmentId,
+          },
+        },
+      ])
+      .exec();
+    if (!teachers) {
+      result.message = 'Teachers not found';
+      result.success = false;
+      result.teacher = null;
+      return result;
+    } else {
+      result.message = 'Teachers found';
+      result.success = true;
+      result.teacher = teachers;
+      return result;
+    }
   }
 }

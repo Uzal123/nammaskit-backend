@@ -7,4 +7,7 @@ export class UpdateResultInput {
 
   @Field(() => Number)
   obtainedMark: number;
+
+  @Field(() => Number)
+  fullMark: number;
 }

@@ -16,12 +16,10 @@ import { FetchResultInput } from './dto/fetch.result.input';
 export class ResultResolver {
   constructor(private readonly resultService: ResultService) {}
 
-  //   @Mutation(() => ResultResponse)
-  //   async createResult(
-  //     @Args('createResultInput') createResultInput: CreateResultInput,
-  //   ) {
-  //     return this.resultService.createResult(createResultInput);
-  //   }
+  @Query(() => ResultsResponse)
+  async getResultsByUSN(@Args('usn') usn: string) {
+    return this.resultService.getResultsByUSN(usn);
+  }
 
   @Query(() => ResultsResponse)
   async getResultsByStudentId(@Args('studentId') studentId: string) {

@@ -27,6 +27,10 @@ export class Result {
   @Field(() => Number)
   @Prop({ required: false })
   obtainedMark: number;
+
+  @Field(() => Number)
+  @Prop({ required: false, default: 100 })
+  fullMark: number;
 }
 
 export type ResultModel = Document & Result;

@@ -12,10 +12,6 @@ export class CreateStudentInput {
   lastName: string;
   @Field(() => String)
   email: string;
-  @Field(() => String)
-  password: string;
-  @Field(() => AllowedRole)
-  role: AllowedRole;
 
   @Field(() => String)
   section: string;
@@ -23,8 +19,8 @@ export class CreateStudentInput {
   @Field(() => Number)
   phone: number;
 
-  @Field(() => String)
-  semester: string;
+  @Field(() => Number)
+  semester: number;
 
   @Field(() => String, { description: 'The user full Name' })
   @Prop({ required: true })

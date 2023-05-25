@@ -8,7 +8,13 @@ export class UpdateStudentInput {
   _id: string;
 
   @Field(() => String, { nullable: true })
-  semester: string | null;
+  email: string | null;
+
+  @Field(() => Number, { nullable: true })
+  phone: number | null;
+
+  @Field(() => Number, { nullable: true })
+  semester: number | null;
 
   @Field(() => String, { nullable: true })
   currentAddress: string | null;

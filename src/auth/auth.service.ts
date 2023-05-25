@@ -207,6 +207,19 @@ export class AuthService {
     return existingOtp;
   }
 
+  //   public async updateUser(
+  //     _id: string,
+  //     email: string,
+  //     phone: number,
+  //     role: AllowedRole,
+  //   ): Promise<UserModel | null> {
+  //     const user = await this.usersService.findByIdAndUpdate(
+  //       _id,
+  //       { email, phone, role },
+  //       { new: true },
+  //     );
+  //   }
+
   private async createOtp(userId: string, otpType: OtpType): Promise<OtpModel> {
     const currentDate = new Date();
     const next2min = this.addMinutesToDate(currentDate, 5);

@@ -40,7 +40,7 @@ export class Subject {
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Department',
+    ref: Department.name,
   })
   department: Department | string;
 

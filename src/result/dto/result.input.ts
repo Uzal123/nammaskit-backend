@@ -14,4 +14,7 @@ export class CreateResultInput {
 
   @Field(() => String)
   subjectCode: string;
+
+  @Field(() => Number)
+    fullMark: number;
 }

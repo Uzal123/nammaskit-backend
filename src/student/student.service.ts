@@ -7,7 +7,7 @@ import { RequestService } from 'src/request.service';
 import { UsersService } from 'src/user/users.service';
 import { AllowedRole } from 'src/common/dto/allowed.roles.enum';
 import { AuthService } from 'src/auth/auth.service';
-import { StudentResponse } from './dto/student.response';
+import { StudentResponse, StudentsResponse } from './dto/student.response';
 import { CreateResultInput } from 'src/result/dto/result.input';
 import { UpdateStudentInput } from './dto/update.student.input';
 
@@ -55,17 +55,6 @@ export class StudentService {
       .populate('user');
     return student;
   }
-
-  //   async updateStudentsProctor(studentIds: string[], proctorId: string) {
-  //     const students = await this.studentModel
-  //       .updateMany(
-  //         { _id: { $in: studentIds } },
-  //         { proctor: proctorId },
-  //         { new: true },
-  //       )
-  //       .populate('user');
-  //     return students;
-  //   }
 
   async getStudentByUserId(userId: string): Promise<StudentResponse> {
     const result = new StudentResponse();
@@ -121,7 +110,6 @@ export class StudentService {
       firstName,
       lastName,
       phone,
-      password,
       email,
       gender,
       semester,
@@ -135,6 +123,7 @@ export class StudentService {
       entranceExamMarks,
       category,
       department,
+      section,
       dob,
       fatherName,
       motherName,
@@ -144,7 +133,7 @@ export class StudentService {
       firstName,
       lastName,
       phone,
-      password,
+      password: 'skit@123',
       email,
       role: AllowedRole.st,
       gender,
@@ -170,6 +159,7 @@ export class StudentService {
           course,
           entranceExamMarks,
           category,
+          section,
           department,
           dob,
           fatherName,
@@ -192,13 +182,102 @@ export class StudentService {
     return result;
   }
 
-  //   async addProctortoStudents(studentIds: string[], proctorId: string) {
-  //     const students = await this.studentModel.updateMany(
-  //       { _id: { $in: studentIds } },
-  //       { proctor: proctorId },
-  //     );
-  //     return students;
-  //   }
+  async createMultipleStudents(
+    createStudentInputs: CreateStudentInput[],
+  ): Promise<StudentsResponse> {
+    const results = new StudentsResponse();
+    results.students = [];
+
+    for (const createStudentInput of createStudentInputs) {
+      const result = new StudentResponse();
+      const {
+        firstName,
+        lastName,
+        phone,
+        email,
+        gender,
+        semester,
+        admissionYear,
+        parentOccupation,
+        parentPhone,
+        section,
+        parmanentAddress,
+        anualIncome,
+        currentAddress,
+        course,
+        entranceExamMarks,
+        category,
+        department,
+        dob,
+        fatherName,
+        motherName,
+        usn,
+      } = createStudentInput;
+
+      const { user, message, success } = await this.authService.register({
+        firstName,
+        lastName,
+        phone,
+        password: 'skit@123',
+        email,
+        role: AllowedRole.st,
+        gender,
+      });
+
+      if (!success || !user) {
+        result.message = message;
+        result.success = false;
+        results.students.push(result.student);
+        continue;
+      }
+
+      const student = await (
+        await this.studentModel.create({
+          user: user._id,
+          semester,
+          admissionYear,
+          section,
+          parentOccupation,
+          parentPhone,
+          parmanentAddress,
+          anualIncome,
+          currentAddress,
+          course,
+          entranceExamMarks,
+          category,
+          department,
+          dob,
+          fatherName,
+          motherName,
+          usn,
+          phone,
+        })
+      ).populate(['user', 'department', 'proctor']);
+
+      if (!student) {
+        result.message = 'Student not created';
+        result.success = false;
+        results.students.push(result.student);
+        continue;
+      }
+
+      result.student = student;
+      result.message = 'Student created successfully';
+      result.success = true;
+      results.students.push(result.student);
+    }
+    results.message = 'Students created successfully';
+    results.success = true;
+    results.students = results.students.filter((student) => student !== null);
+    if (results.students.length === 0) {
+      results.success = false;
+      results.message = 'No students were created';
+    } else {
+      results.message = 'Students created successfully';
+      results.success = true;
+    }
+    return results;
+  }
 
   async getStudentsByProctorId(proctorId: string) {
     const students = await this.studentModel
@@ -214,17 +293,71 @@ export class StudentService {
     return students;
   }
 
-  async updateStudent(updateStudentInput: UpdateStudentInput) {
+  async updateStudent(
+    updateStudentInput: UpdateStudentInput,
+  ): Promise<StudentResponse> {
+    const response = new StudentResponse();
+    const {
+      _id,
+      phone,
+      email,
+      anualIncome,
+      category,
+      course,
+      currentAddress,
+      dob,
+      entranceExamMarks,
+      fatherName,
+      isEligible,
+      motherName,
+      parentOccupation,
+      parentPhone,
+      parmanentAddress,
+      proctor,
+      section,
+      semester,
+    } = updateStudentInput;
     const student = await this.studentModel
       .findOneAndUpdate(
         { _id: updateStudentInput._id },
         {
-          ...updateStudentInput,
+          anualIncome,
+          category,
+          course,
+          currentAddress,
+          dob,
+          entranceExamMarks,
+          fatherName,
+          isEligible,
+          motherName,
+          parentOccupation,
+          parentPhone,
+          parmanentAddress,
+          proctor,
+          section,
+          semester,
         },
         { new: true },
       )
       .populate(['user', 'department', 'proctor']);
-    return student;
+    const user = await this.userService.updateUser(
+      student.user._id.toString(),
+      email,
+      phone,
+      AllowedRole.st,
+    );
+    student.user = user;
+    if (!student) {
+      response.message = 'Student not found';
+      response.success = false;
+      response.student = null;
+      return response;
+    }
+    response.message = 'Student updated successfully';
+    response.success = true;
+    response.student = student;
+
+    return response;
   }
 
   //delete student

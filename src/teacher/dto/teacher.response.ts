@@ -7,6 +7,6 @@ export class TeacherResponse {
   success: boolean;
   @Field(() => String)
   message: string;
-  @Field(() => Teacher, { nullable: true })
-  teacher: Teacher;
+  @Field(() => [Teacher], { nullable: true })
+  teacher: Teacher[];
 }

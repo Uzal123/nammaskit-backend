@@ -5,7 +5,7 @@ import { StudentService } from './student.service';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/guards/roles.decorator';
-import { StudentResponse } from './dto/student.response';
+import { StudentResponse, StudentsResponse } from './dto/student.response';
 import { CreateResultInput } from 'src/result/dto/result.input';
 import { UpdateStudentInput } from './dto/update.student.input';
 
@@ -60,8 +60,21 @@ export class StudentResolver {
     return this.studentService.createStudent(createStudentInput);
   }
 
+  //create Multiple Students mutation
+  @Mutation(() => StudentsResponse)
+  //   @UseGuards(RolesGuard)
+  //   @Roles('ad', 'hod')
+  async createMultipleStudents(
+    @Args('createMultipleStudentsInput', { type: () => [CreateStudentInput] })
+    createMultipleStudentsInput: CreateStudentInput[],
+  ) {
+    return this.studentService.createMultipleStudents(
+      createMultipleStudentsInput,
+    );
+  }
+
   //updateStudent mutation
-  @Mutation(() => Student)
+  @Mutation(() => StudentResponse)
   async updateStudent(
     @Args('updateStudentInput') updateStudentInput: UpdateStudentInput,
   ) {

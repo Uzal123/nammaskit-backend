@@ -23,10 +23,9 @@ export class UsersService {
   }
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserModel>,
-    private readonly requestService: RequestService,
-    // private readonly studentService: StudentService,
-    // private readonly teacherService: TeacherService,
-  ) {}
+    private readonly requestService: RequestService, // private readonly studentService: StudentService,
+  ) // private readonly teacherService: TeacherService,
+  {}
 
   async create(
     createUserInput: CreateUserInput,
@@ -34,6 +33,25 @@ export class UsersService {
     const createdUser = await this.userModel.create(createUserInput);
 
     return createdUser;
+  }
+
+  async updateUser(
+    _id: string,
+    email: string,
+    phone: number,
+    role: AllowedRole,
+  ): Promise<UserModel | null> {
+    const user = await this.userModel.findByIdAndUpdate(
+      _id,
+      {
+        email,
+        phone,
+        role,
+      },
+      { new: true },
+    );
+    if (user) return user;
+    else return null;
   }
 
   async updatePassword(
@@ -54,31 +72,31 @@ export class UsersService {
   }
 
   // get my department and semester
-//   async getMyDepartmentAndSemester(): Promise<MyDeptSemResponse> {
-//     const user = await this.findOneById(this.requestService.getUserId());
-//     if (user && user.role === AllowedRole.st) {
-//       const student = await this.studentService.getStudentByUserId(user._id);
-//       const result = new MyDeptSemResponse();
-//       result.success = true;
-//       result.message = 'Student found';
-//       result.deptId = student.student.department.toString();
-//       result.semester = student.student.semester;
-//       return result;
-//     } else if (user && user.role === AllowedRole.fa) {
-//       const teacher = await this.teacherService.getTeacherByUserId(user._id);
-//       const result = new MyDeptSemResponse();
-//       result.success = true;
-//       result.message = 'Teacher found';
-//       result.deptId = teacher.teacher.department;
-//       result.semester = null;
-//       return result;
-//     } else {
-//       const result = new MyDeptSemResponse();
-//       result.success = false;
-//       result.message = 'User not found';
-//       return result;
-//     }
-//   }
+  //   async getMyDepartmentAndSemester(): Promise<MyDeptSemResponse> {
+  //     const user = await this.findOneById(this.requestService.getUserId());
+  //     if (user && user.role === AllowedRole.st) {
+  //       const student = await this.studentService.getStudentByUserId(user._id);
+  //       const result = new MyDeptSemResponse();
+  //       result.success = true;
+  //       result.message = 'Student found';
+  //       result.deptId = student.student.department.toString();
+  //       result.semester = student.student.semester;
+  //       return result;
+  //     } else if (user && user.role === AllowedRole.fa) {
+  //       const teacher = await this.teacherService.getTeacherByUserId(user._id);
+  //       const result = new MyDeptSemResponse();
+  //       result.success = true;
+  //       result.message = 'Teacher found';
+  //       result.deptId = teacher.teacher.department;
+  //       result.semester = null;
+  //       return result;
+  //     } else {
+  //       const result = new MyDeptSemResponse();
+  //       result.success = false;
+  //       result.message = 'User not found';
+  //       return result;
+  //     }
+  //   }
 
   async me(): Promise<UserResponse> {
     const result = new UserResponse();
@@ -127,7 +145,7 @@ export class UsersService {
 
   async findByIdAndDelete(id: string): Promise<UserModel | undefined> {
     return this.userModel.findByIdAndDelete(id).exec();
-    }
+  }
 
   async findOneByUsername(username: string): Promise<UserModel | undefined> {
     return this.userModel.findOne({ username: username }).exec();
